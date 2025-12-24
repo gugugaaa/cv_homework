@@ -24,10 +24,6 @@
 
 作业要求：
 
-编写伪代码实现一个基于**尺度不变特征（SIFT）**的图像检索系统。
+实现一个具有尺度不变特性的关键点检测器（编写伪代码，可以参考习题4.1）。
 
-实现该系统的性能度量评价。
-
-阅读论文：
-
-Josef Sivic and Andrew Zisserman, Video Google: A Text Retrieval Approach to Object Matching in Videos. ICCV 2003。
+阅读论文 David G. Lowe, Distinctive Image Features from Scale-Invariant Keypoints, IJCV 2004.
