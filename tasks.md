@@ -27,3 +27,9 @@
 实现一个具有尺度不变特性的关键点检测器（编写伪代码，可以参考习题4.1）。
 
 阅读论文 David G. Lowe, Distinctive Image Features from Scale-Invariant Keypoints, IJCV 2004.
+
+作业4
+
+编写伪码描述Viola-Jones实现人脸检测的过程。
+
+阅读论文：P. Viola and M. Jones. Rapid object detection using a boosted cascade of simple features. CVPR 2001
