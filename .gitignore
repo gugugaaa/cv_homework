@@ -8,3 +8,6 @@ task3/tsukuba/
 *.npy
 *.mp4
 *.pt
+task*/
+exp4/yolo.py
+requirements.txt

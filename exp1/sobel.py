@@ -4,26 +4,24 @@ import matplotlib.pyplot as plt
 import os
 
 # ==========================================
-# 1. 核心算法手动实现 (Manual Implementation)
+# 1. 核心算法手动实现
 # ==========================================
 
 def manual_convolution(image, kernel):
     """
     手动实现二维卷积操作 (不调用 cv2.filter2D)
-    Manual implementation of 2D convolution.
     """
     k_h, k_w = kernel.shape
     h, w = image.shape
     
-    # Padding (使用0填充边缘) / Zero padding
+    # Padding (使用0填充边缘)
     pad_h, pad_w = k_h // 2, k_w // 2
     padded_image = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant', constant_values=0)
     
     output = np.zeros((h, w), dtype=np.float32)
     
-    # 遍历每个像素进行卷积运算 / Loop over every pixel
+    # 遍历每个像素进行卷积运算
     # 为了加速，使用了部分 Numpy 切片操作代替最内层循环
-    # To optimize speed while remaining "manual", we use numpy slicing instead of 4-layer loops
     for i in range(h):
         for j in range(w):
             region = padded_image[i:i+k_h, j:j+k_w]
@@ -34,16 +32,15 @@ def manual_convolution(image, kernel):
 def manual_color_histogram(image):
     """
     手动计算彩色图像直方图 (不调用 cv2.calcHist)
-    Manual calculation of color histogram.
     """
     h, w, c = image.shape
     # 初始化直方图数组: 3个通道，每个通道256个灰度级
     histograms = np.zeros((3, 256), dtype=int)
     
-    # 遍历三个通道 / Loop through B, G, R channels
+    # 遍历三个通道
     for ch in range(3):
         channel_data = image[:, :, ch].flatten()
-        # 统计每个像素值的出现次数 / Count pixel occurrences
+        # 统计每个像素值的出现次数
         # 使用 numpy 基础操作实现统计，避免 python 原生循环过慢
         for val in range(256):
             histograms[ch, val] = np.sum(channel_data == val)
@@ -53,18 +50,17 @@ def manual_color_histogram(image):
 def manual_lbp_texture(image):
     """
     手动提取 LBP (Local Binary Pattern) 纹理特征
-    Manual extraction of LBP texture features.
     """
     h, w = image.shape
     output = np.zeros((h-2, w-2), dtype=np.uint8)
     
-    # LBP 邻域权重 / Weights for LBP neighbors
+    # LBP 邻域权重
     #   1   2   4
     #  128  0   8
     #  64  32  16
     weights = np.array([[1, 2, 4], [128, 0, 8], [64, 32, 16]], dtype=np.uint8)
     
-    # 遍历图像内部像素 / Iterate through inner pixels
+    # 遍历图像内部像素
     for i in range(1, h-1):
         for j in range(1, w-1):
             center = image[i, j]
@@ -80,11 +76,11 @@ def manual_lbp_texture(image):
     return output
 
 # ==========================================
-# 2. 主流程 (Main Process)
+# 2. 主流程
 # ==========================================
 
 def main():
-    # --- A. 读取图像 (Task Input) ---
+    # --- A. 读取图像 ---
     img_path = 'properties/rgb.png'
     
     # 如果没有图片，生成一个简单的测试图
@@ -101,23 +97,23 @@ def main():
 
     print("Processing started...")
 
-    # --- B. 任务1 & 2: 滤波 (Filtering) ---
+    # --- B. 任务1 & 2: 滤波 ---
     
     # 1. 定义 Sobel 核 (X 和 Y 方向)
-    # Sobel X (Detects vertical edges)
+    # Sobel X (检测垂直边缘)
     sobel_x_kernel = np.array([
         [-1, 0, 1],
         [-2, 0, 2],
         [-1, 0, 1]
     ])
-    # Sobel Y (Detects horizontal edges)
+    # Sobel Y (检测水平边缘)
     sobel_y_kernel = np.array([
         [-1, -2, -1],
         [ 0,  0,  0],
         [ 1,  2,  1]
     ])
 
-    # 2. 定义题目要求的特定卷积核 (The Specific Kernel Given in Image)
+    # 2. 题目要求的特定卷积核
     # 注意：题目给出的核其实是一个垂直边缘检测核（类似 Sobel X 的变体或旋转）
     given_kernel = np.array([
         [1, 0, -1],
@@ -125,32 +121,32 @@ def main():
         [1, 0, -1]
     ])
 
-    # 执行手动卷积 / Apply manual convolution
+    # 执行手动卷积
     # Sobel 完整算子通常包含 X 和 Y 的结合
     grad_x = manual_convolution(img_gray, sobel_x_kernel)
     grad_y = manual_convolution(img_gray, sobel_y_kernel)
-    sobel_result = np.sqrt(grad_x**2 + grad_y**2) # 幅值 / Magnitude
+    sobel_result = np.sqrt(grad_x**2 + grad_y**2) # 幅值
     
     # 执行题目给定核的滤波
     given_kernel_result = manual_convolution(img_gray, given_kernel)
 
-    # 归一化结果以便显示 / Normalize for visualization (0-255)
+    # 归一化结果以便显示 (0-255)
     sobel_display = cv2.normalize(sobel_result, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
     given_kernel_display = np.clip(np.abs(given_kernel_result), 0, 255).astype(np.uint8)
 
-    # --- C. 任务3: 颜色直方图 (Color Histogram) ---
+    # --- C. 任务3: 颜色直方图 ---
     histograms = manual_color_histogram(img_bgr)
 
-    # --- D. 任务4: 纹理特征 (Texture Feature) ---
+    # --- D. 任务4: 纹理特征 ---
     # 使用 LBP 算法
     lbp_feature = manual_lbp_texture(img_gray)
     
-    # 保存纹理特征到 npy 文件 / Save to .npy
+    # 保存纹理特征到 npy 文件
     np.save('texture_features.npy', lbp_feature)
     print("Texture features saved to 'texture_features.npy'")
 
     # ==========================================
-    # 3. 可视化结果 (Visualization)
+    # 3. 可视化结果
     # ==========================================
     plt.figure(figsize=(14, 10))
 
