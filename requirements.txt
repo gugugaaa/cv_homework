@@ -1,6 +1,0 @@
-opencv-python
-matplotlib
-torch
-torchvision
-ultralytics
-numpy<2
