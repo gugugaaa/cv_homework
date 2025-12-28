@@ -2,13 +2,14 @@
 *.pyc
 __pycache__/
 task1/tsukuba/
-*.png
 task3/tsukuba/
 *.pth
-*.npy
 *.mp4
 *.pt
 task*/
 exp4/yolo.py
 requirements.txt
 tasks.md
+properities/
+*.png
+!exp*.png
